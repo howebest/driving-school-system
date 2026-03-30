@@ -1,0 +1,238 @@
+/* 自适应全屏表格优化样式 */
+.adaptive-fullscreen-table {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* 表格容器自适应 */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 表格列自适应宽度 */
+.adaptive-table th,
+.adaptive-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+}
+
+/* 根据内容自动调整列宽 */
+.adaptive-table colgroup col {
+  width: auto !important;
+}
+
+/* 特殊列宽度控制 */
+.col-id {
+  width: 60px !important;
+  min-width: 60px !important;
+}
+
+.col-checkbox {
+  width: 45px !important;
+  min-width: 45px !important;
+}
+
+.col-avatar {
+  width: 80px !important;
+  min-width: 80px !important;
+}
+
+.col-actions {
+  width: 150px !important;
+  min-width: 150px !important;
+}
+
+.col-status {
+  width: 90px !important;
+  min-width: 90px !important;
+}
+
+.col-date {
+  width: 110px !important;
+  min-width: 110px !important;
+}
+
+/* 表格主体自适应高度 */
+.adaptive-table .el-table__body-wrapper {
+  max-height: calc(100vh - 320px) !important;
+  overflow-y: auto !important;
+}
+
+/* 表头固定 */
+.adaptive-table .el-table__header-wrapper {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 1200px) {
+  .adaptive-table th,
+  .adaptive-table td {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+  
+  .col-actions {
+    width: 120px !important;
+    min-width: 120px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .adaptive-table th,
+  .adaptive-table td {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+  }
+  
+  .col-id {
+    width: 50px !important;
+    min-width: 50px !important;
+  }
+  
+  .col-avatar {
+    width: 60px !important;
+    min-width: 60px !important;
+  }
+  
+  .col-actions {
+    width: 100px !important;
+    min-width: 100px !important;
+  }
+}
+
+/* 表格滚动条美化 */
+.adaptive-table::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.adaptive-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.adaptive-table::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.adaptive-table::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 表格边框优化 */
+.adaptive-table {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+}
+
+.adaptive-table th,
+.adaptive-table td {
+  border-right: 1px solid #ebeef5 !important;
+}
+
+.adaptive-table th:last-child,
+.adaptive-table td:last-child {
+  border-right: none !important;
+}
+
+/* 表格hover效果 */
+.adaptive-table .el-table__row:hover td {
+  background-color: #f5f7fa !important;
+}
+
+/* 固定列优化 */
+.adaptive-table .el-table__fixed,
+.adaptive-table .el-table__fixed-right {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 表格内容对齐 */
+.adaptive-table .cell {
+  padding: 0 !important;
+  line-height: 23px !important;
+}
+
+.adaptive-table .el-table__cell {
+  padding: 8px 0 !important;
+}
+
+/* 文本截断处理 */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 数字列右对齐 */
+.numeric-cell {
+  text-align: right !important;
+}
+
+/* 状态标签优化 */
+.status-tag {
+  margin: 2px 0 !important;
+  padding: 0 8px !important;
+  height: 24px !important;
+  line-height: 22px !important;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+  display: flex !important;
+  gap: 4px !important;
+  justify-content: center !important;
+}
+
+.action-btn {
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  min-height: 24px !important;
+}
+
+/* 表格工具栏优化 */
+.table-toolbar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid #ebeef5 !important;
+}
+
+.toolbar-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.toolbar-right {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+/* 分页器优化 */
+.adaptive-pagination {
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 16px 0 !important;
+  border-top: 1px solid #ebeef5 !important;
+}
+
+/* 加载状态优化 */
+.adaptive-table .el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 空状态优化 */
+.adaptive-table .el-table__empty-block {
+  min-height: 200px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

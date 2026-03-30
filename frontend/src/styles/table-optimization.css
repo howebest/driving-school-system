@@ -1,0 +1,230 @@
+/* 全局表格优化样式 */
+
+/* 表格整体优化 */
+.el-table {
+  font-size: 13px;
+}
+
+.el-table th {
+  font-weight: 600;
+  color: #1e293b;
+  background-color: #f8fafc !important;
+  padding: 12px 0;
+}
+
+.el-table td {
+  padding: 8px 0;
+}
+
+/* 表格行hover效果 */
+.el-table__row:hover {
+  background-color: #f8fafc !important;
+}
+
+/* 表格边框优化 */
+.el-table--border th,
+.el-table--border td {
+  border-right: 1px solid #e2e8f0;
+}
+
+.el-table--border th:first-child,
+.el-table--border td:first-child {
+  border-left: 1px solid #e2e8f0;
+}
+
+/* 表格斑马纹 */
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: #f8fafc;
+}
+
+/* 表格排序箭头 */
+.el-table__column-sortable .caret-wrapper {
+  height: 20px;
+}
+
+.el-table__column-sortable .sort-caret.ascending {
+  border-bottom-color: #94a3b8;
+}
+
+.el-table__column-sortable .sort-caret.descending {
+  border-top-color: #94a3b8;
+}
+
+/* 表格复选框优化 */
+.el-table th.el-table__cell:first-child .cell {
+  padding-left: 12px;
+}
+
+.el-table td.el-table__cell:first-child .cell {
+  padding-left: 12px;
+}
+
+/* 表格操作列优化 */
+.el-table__fixed-right {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 表格加载状态 */
+.el-table__body-wrapper .el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 表格空状态 */
+.el-table__empty-block {
+  min-height: 200px;
+}
+
+.el-table__empty-text {
+  color: #94a3b8;
+}
+
+/* 响应式表格 */
+@media (max-width: 768px) {
+  .el-table {
+    font-size: 12px;
+  }
+  
+  .el-table th,
+  .el-table td {
+    padding: 6px 0;
+  }
+}
+
+/* 紧凑模式表格 */
+.table-compact .el-table th,
+.table-compact .el-table td {
+  padding: 6px 0;
+}
+
+.table-compact .el-table {
+  font-size: 12px;
+}
+
+/* 全屏表格 */
+.table-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: white;
+}
+
+.table-fullscreen .el-table {
+  height: calc(100vh - 120px);
+}
+
+/* 表格工具栏 */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-toolbar .toolbar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.table-toolbar .toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* 表格搜索区域 */
+.table-search {
+  padding: 16px 20px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-search .el-form-item {
+  margin-bottom: 0;
+}
+
+/* 表格分页优化 */
+.table-pagination {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.table-pagination .el-pagination {
+  font-size: 13px;
+}
+
+.table-pagination .el-pagination__total {
+  color: #64748b;
+}
+
+/* 表格状态标签统一 */
+.status-tag {
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-tag.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-tag.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-tag.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-tag.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* 表格操作按钮组 */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.table-actions .el-button {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* 表格头像优化 */
+.table-avatar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-avatar .el-avatar {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.table-avatar .name-text {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 13px;
+}

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾校管理系统 - 全屏版</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      font-size: 12px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 头部样式 - 全屏宽度 */
+    .header {
+      background: white;
+      color: #333;
+      padding: 0.6rem 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #e8eaec;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 50px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-width: 180px;
+    }
+
+    .logo h1 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2329;
+    }
+
+    .logo-icon {
+      background: #1677ff;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .page-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #1f2329;
+      flex: 1;
+      text-align: center;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-width: 300px;
+      justify-content: flex-end;
+    }
+
+    /* 主体布局 - 全屏 */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 50px);
+      margin-top: 50px;
+    }
+
+    /* 侧边栏 - 顶到最左侧 */
+    .sidebar {
+      width: 180px;
+      background: white;
+      border-right: 1px solid #e8eaec;
+      height: 100%;
+      overflow-y: auto;
+      position: fixed;
+      left: 0;
+      top: 50px;
+      bottom: 0;
+      z-index: 90;
+    }
+
+    .menu-item {
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-radius: 0 20px 20px 0;
+      margin: 0.2rem 0;
+      margin-right: 0.6rem;
+      font-size: 12px;
+      color: #5a5a5a;
+    }
+
+    .menu-item:hover {
+      background: #f0f5ff;
+      color: #1677ff;
+    }
+
+    .menu-item.active {
+      background: #e6f0ff;
+      color: #1677ff;
+      font-weight: 500;
+    }
+
+    .menu-item.warning {
+      background: #fffbe6;
+      color: #faad14;
+      border-left: 3px solid #faad14;
+    }
+
+    .menu-item i {
+      font-size: 12px;
+      width: 18px;
+      text-align: center;
+    }
+
+    /* 主内容区 - 自适应最大宽度 */
+    .content-area {
+      flex: 1;
+      margin-left: 180px;
+      padding: 1.2rem;
+      height: 100%;
+      overflow-y: auto;
+      background: #f5f7fa;
+    }
+
+    /* 页面标识 */
+    .version-tag {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: #1677ff;
+      color: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      font-size: 11px;
+      z-index: 101;
+      box-shadow: 0 2px 8px rgba(22,119,255,0.3);
+    }
+
+    /* 其他样式保持不变 */
+    .page-header { margin-bottom: 1.2rem; }
+    .page-header h2 { font-size: 18px; color: #1f2329; margin-bottom: 0.3rem; }
+    .page-subtitle { color: #8c8c8c; font-size: 12px; }
+    
+    .card {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .stat-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .stat-icon.red { background: #fff1f0; color: #ff4d4f; }
+    .stat-icon.orange { background: #fff7e6; color: #fa8c16; }
+    .stat-icon.green { background: #f6ffed; color: #52c41a; }
+    .stat-icon.blue { background: #e6f7ff; color: #1890ff; }
+    
+    .stat-content h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: #1f2329;
+    }
+    
+    .stat-content p {
+      color: #8c8c8c;
+      font-size: 12px;
+    }
+    
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-container {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+    
+    .chart-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1f2329;
+    }
+    
+    .view-details-btn {
+      background: #1890ff;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .chart-placeholder {
+      height: 200px;
+      background: #fafafa;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bfbfbf;
+      font-size: 14px;
+    }
+    
+    .btn {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .btn-primary {
+      background: #1677ff;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #4096ff;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+    }
+    
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    th {
+      background: #fafafa;
+      font-weight: 500;
+      color: #5a5a5a;
+      font-size: 12px;
+    }
+    
+    .status-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    
+    .status-unprocessed { background: #fffbe6; color: #d48806; }
+    .status-processed { background: #f6ffed; color: #389e0d; }
+    .status-active { background: #e6f4ff; color: #1677ff; }
+  </style>
+</head>
+<body>
+  <!-- 版本标识 -->
+  <div class="version-tag">全屏版本 v2.0</div>
+  
+  <!-- 头部 -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">驾</div>
+        <h1>驾校系统</h1>
+      </div>
+      
+      <div class="page-title">系统首页</div>
+      
+      <div class="header-actions">
+        <div style="color: #8c8c8c; font-size: 12px;">
+          全屏布局演示版本
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体容器 -->
+  <div class="main-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="menu-item active" onclick="switchMenu('dashboard')">
+        <i class="fas fa-home"></i>
+        <span>首页概览</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('student')">
+        <i class="fas fa-users"></i>
+        <span>学员管理</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('coach')">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <span>教务管理</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('car')">
+        <i class="fas fa-car"></i>
+        <span>车辆管理</span>
+      </div>
+      <div class="menu-item warning" onclick="switchMenu('alert-monitor')">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>预警监测</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('settings')">
+        <i class="fas fa-cog"></i>
+        <span>系统设置</span>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="content-area">
+      <div id="main-content">
+        <!-- 默认显示首页 -->
+        <div class="page-header">
+          <h2>系统首页</h2>
+        </div>
+        
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon red">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+              <h3>12</h3>
+              <p>今日违规</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <h3>3</h3>
+              <p>未处理记录</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="stat-content">
+              <h3>45</h3>
+              <p>今日注册人数</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fas fa-car"></i>
+            </div>
+            <div class="stat-content">
+              <h3>18</h3>
+              <p>正在车辆</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 图表区域 -->
+        <div class="charts-row">
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title">近7天违规趋势</div>
+              <button class="view-details-btn">查看详情 →</button>
+            </div>
+            <div class="chart-placeholder">
+              <div>
+                <div style="height: 150px; background: linear-gradient(to right, #1890ff, #4096ff); border-radius: 6px; margin-bottom: 10px;"></div>
+                <p>周一 周二 周三 周四 周五 周六 周日</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title">违规类型分布</div>
+              <button class="view-details-btn">查看详情 →</button>
+            </div>
+            <div class="chart-placeholder">
+              <div>
+                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#1890ff 0% 30%, #52c41a 30% 50%, #bfbfbf 50% 70%, #fa8c16 70% 85%, #722ed1 85% 100%); margin: 0 auto 10px;"></div>
+                <p>本校学员练车 30%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 实时预警表格 -->
+        <div class="card">
+          <div style="margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid #f0f0f0;">
+            <h3 style="font-size: 16px; color: #1f2329;">实时预警</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>地点</th>
+                <th>人员</th>
+                <th>身份</th>
+                <th>违规类型</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>14:32-15</td>
+                <td>科二倒车入库区域</td>
+                <td>张三</td>
+                <td>学员</td>
+                <td>非本校学员练车</td>
+                <td><span class="status-badge status-unprocessed">未处理</span></td>
+                <td><button class="btn btn-primary" style="padding: 0.2rem 0.5rem; font-size: 11px;">处理</button></td>
+              </tr>
+              <tr>
+                <td>14:28-33</td>
+                <td>科三路线1</td>
+                <td>李四</td>
+                <td>教练</td>
+                <td>非班时间教学</td>
+                <td><span class="status-badge status-processed">已处理</span></td>
+                <td><button class="btn btn-primary" style="padding: 0.2rem 0.5rem; font-size: 11px;">处理</button></td>
+              </tr>
+              <tr>
+                <td>14:15-20</td>
+                <td>科二倒车入库区域</td>
+                <td>王五</td>
+                <td>学员</td>
+                <td>教练不在场独自练车</td>
+                <td><span class="status-badge status-unprocessed">未处理</span></td>
+                <td><button class="btn btn-primary" style="padding: 0.2rem 0.5rem; font-size: 11px;">处理</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function switchMenu(menu) {
+      // 更新活动状态
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // 简单的页面切换演示
+      const contentMap = {
+        dashboard: '系统首页内容',
+        student: '学员管理功能开发中...',
+        coach: '教务管理功能开发中...',
+        car: '车辆管理功能开发中...',
+        'alert-monitor': '预警监测功能开发中...',
+        settings: '系统设置功能开发中...'
+      };
+      
+      document.getElementById('main-content').innerHTML = 
+        `<div class="page-header"><h2>${event.currentTarget.querySelector('span').textContent}</h2></div>` +
+        `<div class="card"><h3>${contentMap[menu]}</h3></div>`;
+    }
+    
+    console.log('全屏版驾校管理系统已加载 - 版本 v2.0');
+  </script>
+</body>
+</html>

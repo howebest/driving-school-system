@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>驾校管理系统 - 最简化版本</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .main-content { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; font-size: 14px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 5% auto; padding: 0; border-radius: 10px; width: 90%; max-width: 600px; }
+        .modal-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 15px 20px; background: #f8f9fa; border-radius: 0 0 10px 10px; text-align: right; }
+        .avatar-upload { display: flex; flex-direction: column; align-items: flex-start; }
+        .avatar-preview-area { position: relative; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>驾校管理系统</h1>
+        </div>
+        
+        <div class="main-content">
+            <h2>学员管理</h2>
+            <button class="btn btn-primary" onclick="openModal()">新增学员</button>
+            
+            <div style="margin-top: 20px;">
+                <h3>学员列表</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">姓名</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">手机号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentList">
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">张三</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">13800138000</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
+                                <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">编辑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增学员模态框 -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新增学员</h3>
+                <span style="cursor: pointer; font-size: 24px;" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">姓名 *</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">手机号 *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idCard">身份证号 *</label>
+                            <input type="text" id="idCard" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">性别 *</label>
+                            <select id="gender" required>
+                                <option value="">请选择</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 头像上传组件 -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="avatar">头像上传</label>
+                            <div class="avatar-upload">
+                                <div class="avatar-preview-area">
+                                    <img id="avatarPreview" src="" alt="头像预览" style="display: none; width: 80px; height: 80px; border-radius: 50%; border: 2px solid #ddd;">
+                                    <div id="uploadPlaceholder" style="width: 80px; height: 80px; border: 2px dashed #ccc; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f9f9f9;">
+                                        <div style="font-size: 20px;">📷</div>
+                                        <p style="font-size: 10px; margin: 3px 0;">上传头像</p>
+                                    </div>
+                                </div>
+                                <button type="button" id="uploadBtn" class="btn btn-secondary" style="margin-top: 10px;">选择头像文件</button>
+                                <input type="file" id="avatar" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 备注字段 -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" rows="2" placeholder="请输入学员相关备注信息"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveStudent()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开模态框
+        function openModal() {
+            document.getElementById('addStudentModal').style.display = 'block';
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('addStudentModal').style.display = 'none';
+            document.getElementById('studentForm').reset();
+            document.getElementById('avatarPreview').style.display = 'none';
+            document.getElementById('uploadPlaceholder').style.display = 'flex';
+            document.getElementById('avatar').value = '';
+        }
+        
+        // 头像上传功能
+        document.getElementById('uploadBtn').onclick = function() {
+            document.getElementById('avatar').click();
+        };
+        
+        document.getElementById('avatar').onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('图片大小不能超过2MB！');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('avatarPreview').src = event.target.result;
+                    document.getElementById('avatarPreview').style.display = 'block';
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        // 保存学员信息
+        function saveStudent() {
+            const form = document.getElementById('studentForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const studentData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                idCard: document.getElementById('idCard').value,
+                gender: document.getElementById('gender').value,
+                notes: document.getElementById('notes').value,
+                studentId: 'STU' + Date.now()
+            };
+            
+            console.log('保存学员信息:', studentData);
+            alert('学员信息保存成功！');
+            closeModal();
+        }
+        
+        console.log('系统初始化完成');
+    </script>
+</body>
+</html>

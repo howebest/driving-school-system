@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .test-item {
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .success { border-color: #4CAF50; background: #f1f8e9; }
+    .error { border-color: #f44336; background: #ffebee; }
+    button {
+      background: #1e80ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #0066cc; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>驾校系统调试面板</h1>
+    
+    <div class="test-item" id="vue-test">
+      <strong>Vue.js 测试:</strong> <span id="vue-status">检测中...</span>
+    </div>
+    
+    <div class="test-item" id="token-test">
+      <strong>登录状态:</strong> <span id="token-status">检测中...</span>
+      <br>
+      <button onclick="setTestToken()">设置测试Token</button>
+      <button onclick="clearToken()">清除Token</button>
+    </div>
+    
+    <div class="test-item" id="route-test">
+      <strong>路由测试:</strong> <span id="route-status">检测中...</span>
+      <br>
+      <button onclick="window.location.hash = '#/login'">跳转登录页</button>
+      <button onclick="window.location.hash = '#/'">跳转首页</button>
+      <button onclick="window.location.hash = '#/student'">跳转学员管理</button>
+    </div>
+    
+    <div class="test-item">
+      <strong>控制台输出:</strong>
+      <div id="console-output" style="margin-top: 10px; font-family: monospace; background: #f8f8f8; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;">
+        等待日志输出...
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+      <button onclick="location.href='/'">返回主系统</button>
+      <button onclick="location.reload()">刷新页面</button>
+    </div>
+  </div>
+
+  <script>
+    // 捕获控制台输出
+    const originalLog = console.log;
+    const originalError = console.error;
+    const consoleOutput = document.getElementById('console-output');
+    
+    function addToConsole(message, isError = false) {
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.innerHTML = `[${timestamp}] ${message}`;
+      entry.style.color = isError ? '#f44336' : '#333';
+      consoleOutput.appendChild(entry);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+    
+    console.log = function(...args) {
+      addToConsole(args.join(' '));
+      originalLog.apply(console, args);
+    };
+    
+    console.error = function(...args) {
+      addToConsole(args.join(' '), true);
+      originalError.apply(console, args);
+    };
+
+    // 测试Vue
+    setTimeout(() => {
+      const vueStatus = document.getElementById('vue-status');
+      if (typeof Vue !== 'undefined') {
+        vueStatus.textContent = '✅ Vue.js 已加载';
+        vueStatus.parentElement.className = 'test-item success';
+      } else {
+        vueStatus.textContent = '❌ Vue.js 未加载';
+        vueStatus.parentElement.className = 'test-item error';
+      }
+    }, 1000);
+
+    // 测试Token
+    function updateTokenStatus() {
+      const token = localStorage.getItem('token');
+      const tokenStatus = document.getElementById('token-status');
+      if (token) {
+        tokenStatus.textContent = `✅ 已登录 (${token.substring(0, 10)}...)`;
+        tokenStatus.parentElement.className = 'test-item success';
+      } else {
+        tokenStatus.textContent = '❌ 未登录';
+        tokenStatus.parentElement.className = 'test-item error';
+      }
+    }
+
+    function setTestToken() {
+      localStorage.setItem('token', 'test-token-' + Date.now());
+      updateTokenStatus();
+    }
+
+    function clearToken() {
+      localStorage.removeItem('token');
+      updateTokenStatus();
+    }
+
+    updateTokenStatus();
+
+    // 测试路由
+    function updateRouteStatus() {
+      const routeStatus = document.getElementById('route-status');
+      routeStatus.textContent = `当前路径: ${window.location.hash || '无'}`;
+    }
+
+    window.addEventListener('hashchange', updateRouteStatus);
+    updateRouteStatus();
+
+    // 初始化日志
+    console.log('调试面板已加载');
+    console.log('当前URL:', window.location.href);
+    console.log('localStorage token:', localStorage.getItem('token'));
+  </script>
+</body>
+</html>

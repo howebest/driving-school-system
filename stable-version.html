@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾校管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* 头部样式 */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* 主体布局 */
+    .main-container {
+      display: flex;
+      min-height: calc(100vh - 80px);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      width: 250px;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+      padding: 1rem 0;
+    }
+
+    .menu-item {
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-left: 3px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      border-left-color: #667eea;
+    }
+
+    .menu-item.active {
+      background: #667eea;
+      color: white;
+      border-left-color: #667eea;
+    }
+
+    .menu-item i {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* 主内容区 */
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    /* 卡片样式 */
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* 按钮样式 */
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd8;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    /* 表格样式 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #555;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* 状态标签 */
+    .status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* 模态框样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .close {
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 0 0 10px 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* 表单样式 */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        padding: 0.5rem 0;
+      }
+      
+      .content-area {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <h1>驾校管理系统</h1>
+      </div>
+      <div class="user-info">
+        <span>管理员</span>
+        <button class="btn btn-secondary" onclick="logout()">退出</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体容器 -->
+  <div class="main-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="menu-item active" onclick="switchMenu('dashboard')">
+        <i>📊</i>
+        <span>首页概览</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('student')">
+        <i>👥</i>
+        <span>学员管理</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('coach')">
+        <i>👨‍🏫</i>
+        <span>教练管理</span>
+      </div>
+      <div class="menu-item" onclick="switchMenu('car')">
+        <i>🚗</i>
+        <span>车辆管理</span>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="content-area">
+      <div id="main-content">
+        <!-- 默认显示首页 -->
+      </div>
+    </main>
+  </div>
+
+  <!-- 新增学员模态框 -->
+  <div id="addStudentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>新增学员</h3>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="studentForm">
+          <div class="form-group">
+            <label for="name">姓名 *</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">手机号 *</label>
+            <input type="tel" id="phone" name="phone" required pattern="^1[3-9]\d{9}$">
+          </div>
+          
+          <div class="form-group">
+            <label for="idCard">身份证号 *</label>
+            <input type="text" id="idCard" name="idCard" required pattern="^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$">
+          </div>
+          
+          <div class="form-group">
+            <label for="gender">性别 *</label>
+            <select id="gender" name="gender" required>
+              <option value="">请选择</option>
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="licenseType">驾照类型 *</label>
+            <select id="licenseType" name="licenseType" required>
+              <option value="">请选择</option>
+              <option value="C1">C1（小型汽车）</option>
+              <option value="C2">C2（小型自动挡汽车）</option>
+              <option value="B1">B1（中型客车）</option>
+              <option value="B2">B2（大型货车）</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="enrollmentDate">报名日期 *</label>
+            <input type="date" id="enrollmentDate" name="enrollmentDate" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="notes">备注</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="请输入学员相关备注信息"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveStudent()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeMenu = 'dashboard';
+
+    // 菜单配置
+    const menuConfig = {
+      dashboard: {
+        title: '首页概览',
+        content: `
+          <div class="page-header">
+            <h2>首页概览</h2>
+          </div>
+          <div class="card">
+            <h3>欢迎使用驾校管理系统</h3>
+            <p>这里是系统的首页概览页面。</p>
+          </div>
+        `
+      },
+      student: {
+        title: '学员管理',
+        content: `
+          <div class="page-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h2>学员管理</h2>
+              <button class="btn btn-primary" onclick="addStudent()">➕ 新增学员</button>
+            </div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>张三</td>
+                  <td>13800138000</td>
+                  <td><span class="status-badge status-active">在读</span></td>
+                  <td>
+                    <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">编辑</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>李四</td>
+                  <td>13800138001</td>
+                  <td><span class="status-badge status-inactive">已毕业</span></td>
+                  <td>
+                    <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">编辑</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      },
+      coach: {
+        title: '教练管理',
+        content: `
+          <div class="page-header">
+            <h2>教练管理</h2>
+          </div>
+          <div class="card">
+            <h3>教练管理功能开发中...</h3>
+          </div>
+        `
+      },
+      car: {
+        title: '车辆管理',
+        content: `
+          <div class="page-header">
+            <h2>车辆管理</h2>
+          </div>
+          <div class="card">
+            <h3>车辆管理功能开发中...</h3>
+          </div>
+        `
+      }
+    };
+
+    // 切换菜单函数
+    function switchMenu(menu) {
+      // 更新活动状态
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // 更新内容
+      document.getElementById('main-content').innerHTML = menuConfig[menu].content;
+      
+      activeMenu = menu;
+    }
+
+    // 功能函数
+    function addStudent() {
+      document.getElementById('addStudentModal').style.display = 'block';
+      // 设置默认报名日期为今天
+      document.getElementById('enrollmentDate').valueAsDate = new Date();
+    }
+
+    function closeModal() {
+      document.getElementById('addStudentModal').style.display = 'none';
+      document.getElementById('studentForm').reset();
+    }
+
+    function saveStudent() {
+      const form = document.getElementById('studentForm');
+      
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      const formData = new FormData(form);
+      const studentData = {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        idCard: formData.get('idCard'),
+        gender: formData.get('gender'),
+        licenseType: formData.get('licenseType'),
+        enrollmentDate: formData.get('enrollmentDate'),
+        notes: formData.get('notes') || '',
+        studentId: 'STU' + Date.now(),
+        status: 'active',
+        createTime: new Date().toISOString()
+      };
+      
+      console.log('保存学员信息:', studentData);
+      alert('学员信息保存成功！');
+      closeModal();
+    }
+
+    function logout() {
+      if(confirm('确定要退出登录吗？')) {
+        alert('退出登录功能');
+      }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 默认显示首页
+      switchMenu('dashboard');
+    });
+
+    console.log('驾校管理系统已加载');
+  </script>
+</body>
+</html>

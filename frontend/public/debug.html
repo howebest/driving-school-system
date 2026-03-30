@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾校场地监管系统 - 调试版</title>
+</head>
+<body>
+  <div id="app">
+    <div style="padding: 50px; text-align: center;">
+      <h1>系统正在加载...</h1>
+      <p>如果长时间显示此页面，请检查控制台错误</p>
+      <button onclick="localStorage.setItem('token', 'debug-token'); location.reload();">
+        设置调试Token
+      </button>
+      <button onclick="localStorage.removeItem('token'); location.reload();">
+        清除Token
+      </button>
+    </div>
+  </div>
+  <script>
+    // 调试信息
+    console.log('页面加载时间:', new Date().toLocaleString());
+    console.log('localStorage token:', localStorage.getItem('token'));
+  </script>
+</body>
+</html>

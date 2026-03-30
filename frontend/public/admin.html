@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾校管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* 布局容器 */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+    }
+    
+    /* 左侧导航栏 */
+    .sidebar {
+      width: 220px;
+      background: white;
+      border-right: 1px solid #e4e9f0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+    
+    .logo-area {
+      padding: 24px;
+      border-bottom: 1px solid #e4e9f0;
+    }
+    
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e80ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: #1e80ff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .nav-menu {
+      flex: 1;
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+    
+    .menu-group {
+      margin-bottom: 8px;
+    }
+    
+    .menu-title {
+      padding: 12px 24px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    
+    .menu-item:hover {
+      background: #f0f7ff;
+      color: #1e80ff;
+    }
+    
+    .menu-item.active {
+      background: #eaf3ff;
+      color: #1e80ff;
+      border-left: 3px solid #1e80ff;
+      font-weight: 500;
+    }
+    
+    .menu-item i {
+      margin-right: 12px;
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .user-info {
+      padding: 16px 24px;
+      border-top: 1px solid #e4e9f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1e80ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .user-name {
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+    }
+    
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    /* 主内容区域 */
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    /* 顶部工具栏 */
+    .top-bar {
+      background: white;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-bottom: 1px solid #e4e9f0;
+    }
+    
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .search-box {
+      position: relative;
+    }
+    
+    .search-input {
+      padding: 8px 12px 8px 36px;
+      border: 1px solid #e4e9f0;
+      border-radius: 4px;
+      width: 240px;
+      font-size: 14px;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    
+    /* 内容区域 */
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    
+    /* 页面头部 */
+    .page-header {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .header-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .header-desc {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    /* 统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    
+    .stat-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-size: 24px;
+      color: white;
+    }
+    
+    .stat-icon.blue { background: #1e80ff; }
+    .stat-icon.green { background: #2e7d32; }
+    .stat-icon.orange { background: #f57c00; }
+    .stat-icon.purple { background: #7b1fa2; }
+    
+    .stat-info {
+      flex: 1;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* 表格容器 */
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .table-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .table-title {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      background: #f8f9fa;
+      padding: 12px 24px;
+      text-align: left;
+      font-weight: 500;
+      color: #666;
+      border-bottom: 1px solid #eee;
+    }
+    
+    td {
+      padding: 12px 24px;
+      border-bottom: 1px solid #eee;
+      color: #333;
+    }
+    
+    tr:hover {
+      background: #f8f9fa;
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .btn-primary {
+      background: #1e80ff;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #0066cc;
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: #666;
+      border: 1px solid #e4e9f0;
+    }
+    
+    .btn-secondary:hover {
+      background: #f8f9fa;
+      border-color: #c9d1d9;
+    }
+    
+    .btn-text {
+      background: transparent;
+      color: #1e80ff;
+      padding: 4px 8px;
+    }
+    
+    .btn-text:hover {
+      background: #f0f7ff;
+    }
+    
+    /* 标签样式 */
+    .tag {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .tag-success { background: #e8f5e9; color: #2e7d32; }
+    .tag-warning { background: #fff3e0; color: #f57c00; }
+    .tag-danger { background: #ffebee; color: #c62828; }
+    .tag-info { background: #e3f2fd; color: #1565c0; }
+    .tag-primary { background: #eaf3ff; color: #1e80ff; }
+    
+    /* 搜索过滤区域 */
+    .filter-bar {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .filter-row {
+      display: flex;
+      gap: 16px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+    
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .filter-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .filter-input, .filter-select {
+      padding: 8px 12px;
+      border: 1px solid #e4e9f0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .filter-select {
+      min-width: 150px;
+    }
+    
+    /* 分页器 */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-top: 1px solid #eee;
+    }
+    
+    .pagination-info {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+      }
+      
+      .logo-area {
+        padding: 16px;
+      }
+      
+      .logo-text {
+        display: none;
+      }
+      
+      .menu-title {
+        display: none;
+      }
+      
+      .menu-item span {
+        display: none;
+      }
+      
+      .content-area {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+      <div class="logo-area">
+        <div class="logo">
+          <div class="logo-icon">驾</div>
+          <span class="logo-text">驾校系统</span>
+        </div>
+      </div>
+      
+      <div class="nav-menu">
+        <div class="menu-group">
+          <div class="menu-title">主菜单</div>
+          <a href="#" class="menu-item active" onclick="switchMenu('dashboard')">
+            <i>📊</i>
+            <span>首页概览</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('student')">
+            <i>👥</i>
+            <span>学员管理</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('coach')">
+            <i>👨‍🏫</i>
+            <span>教练管理</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('car')">
+            <i>🚗</i>
+            <span>车辆管理</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('site')">
+            <i>🏢</i>
+            <span>场地管理</span>
+          </a>
+        </div>
+        
+        <div class="menu-group">
+          <div class="menu-title">监控管理</div>
+          <a href="#" class="menu-item" onclick="switchMenu('monitor')">
+            <i>🔍</i>
+            <span>违规监测</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('warning')">
+            <i>⚠️</i>
+            <span>预警管理</span>
+          </a>
+          <a href="#" class="menu-item" onclick="switchMenu('record')">
+            <i>📋</i>
+            <span>违规记录</span>
+          </a>
+        </div>
+        
+        <div class="menu-group">
+          <div class="menu-title">数据分析</div>
+          <a href="#" class="menu-item" onclick="switchMenu('report')">
+            <i>📈</i>
+            <span>统计报表</span>
+          </a>
+        </div>
+        
+        <div class="menu-group">
+          <div class="menu-title">系统设置</div>
+          <a href="#" class="menu-item" onclick="switchMenu('settings')">
+            <i>⚙️</i>
+            <span>系统设置</span>
+          </a>
+        </div>
+      </div>
+      
+      <div class="user-info">
+        <div class="avatar">管</div>
+        <div class="user-name">管理员</div>
+        <button class="logout-btn" onclick="logout()">🚪</button>
+      </div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-container">
+      <!-- 顶部工具栏 -->
+      <div class="top-bar">
+        <div class="page-title" id="current-page-title">首页概览</div>
+        <div class="top-actions">
+          <div class="search-box">
+            <i class="search-icon">🔍</i>
+            <input type="text" class="search-input" placeholder="搜索...">
+          </div>
+          <button class="btn btn-secondary">🔔</button>
+          <button class="btn btn-secondary">⚙️</button>
+        </div>
+      </div>
+      
+      <!-- 内容区域 -->
+      <div class="content-area">
+        <div id="main-content">
+          <!-- 页面内容将在这里动态渲染 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 当前活动菜单
+    let activeMenu = 'dashboard';
+    
+    // 页面配置数据
+    const menuConfig = {
+      dashboard: {
+        title: '首页概览',
+        content: `
+          <div class="page-header">
+            <div class="header-main">
+              <div class="header-title">
+                <h1>首页概览</h1>
+                <div class="header-desc">系统整体运营数据统计和实时监控</div>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-secondary">📅 今日报告</button>
+                <button class="btn btn-primary">📊 数据分析</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-info">
+                  <div class="stat-value">156</div>
+                  <div class="stat-label">学员总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">👨‍🏫</div>
+                <div class="stat-info">
+                  <div class="stat-value">24</div>
+                  <div class="stat-label">教练总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">🚗</div>
+                <div class="stat-info">
+                  <div class="stat-value">36</div>
+                  <div class="stat-label">车辆总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon purple">🏢</div>
+                <div class="stat-info">
+                  <div class="stat-value">12</div>
+                  <div class="stat-label">场地总数</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">🎯</div>
+                <div class="stat-info">
+                  <div class="stat-value">85%</div>
+                  <div class="stat-label">结业率</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">🛡️</div>
+                <div class="stat-info">
+                  <div class="stat-value">99.2%</div>
+                  <div class="stat-label">安全率</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">⏱️</div>
+                <div class="stat-info">
+                  <div class="stat-value">4.2h</div>
+                  <div class="stat-label">平均训练时长</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon purple">💰</div>
+                <div class="stat-info">
+                  <div class="stat-value">¥2.4M</div>
+                  <div class="stat-label">月营收</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      
+      student: {
+        title: '学员管理',
+        content: `
+          <div class="page-header">
+            <div class="header-main">
+              <div class="header-title">
+                <h1>学员管理</h1>
+                <div class="header-desc">管理驾校学员信息、状态和人脸绑定</div>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-primary" onclick="addStudent()">➕ 新增学员</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-bar">
+            <div class="filter-row">
+              <div class="filter-item">
+                <label class="filter-label">关键词</label>
+                <input type="text" class="filter-input" placeholder="姓名/身份证号/手机号">
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">状态</label>
+                <select class="filter-select">
+                  <option value="">请选择</option>
+                  <option value="active">在读</option>
+                  <option value="graduated">已结业</option>
+                  <option value="dropout">退学</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">入学时间</label>
+                <input type="date" class="filter-input">
+              </div>
+              <div class="filter-item">
+                <button class="btn btn-primary">🔍 搜索</button>
+                <button class="btn btn-secondary">🔄 重置</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-header">
+              <div class="table-title">学员列表 [共 156 条记录]</div>
+              <div>
+                <button class="btn btn-secondary">🔄 刷新</button>
+                <button class="btn btn-secondary">📥 导出</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox"></th>
+                  <th>ID</th>
+                  <th>姓名</th>
+                  <th>身份证号</th>
+                  <th>手机号</th>
+                  <th>入学日期</th>
+                  <th>状态</th>
+                  <th>人脸绑定</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>1</td>
+                  <td>张三</td>
+                  <td>110101199001011234</td>
+                  <td>13800138000</td>
+                  <td>2024-01-15</td>
+                  <td><span class="tag tag-primary">在读</span></td>
+                  <td><span class="tag tag-success">✓ 已绑定</span></td>
+                  <td>
+                    <button class="btn btn-text">📝 编辑</button>
+                    <button class="btn btn-text">🔒 绑定</button>
+                    <button class="btn btn-text">🗑️ 删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>2</td>
+                  <td>李四</td>
+                  <td>110101199002021235</td>
+                  <td>13800138001</td>
+                  <td>2023-12-20</td>
+                  <td><span class="tag tag-success">已结业</span></td>
+                  <td><span class="tag tag-danger">× 未绑定</span></td>
+                  <td>
+                    <button class="btn btn-text">📝 编辑</button>
+                    <button class="btn btn-text">🔒 绑定</button>
+                    <button class="btn btn-text">🗑️ 删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <div class="pagination-info">显示 1-20 条，共 156 条记录</div>
+              <div class="pagination-controls">
+                <button class="btn btn-secondary">上一页</button>
+                <span>第 1 页</span>
+                <button class="btn btn-secondary">下一页</button>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      
+      coach: {
+        title: '教练管理',
+        content: `
+          <div class="page-header">
+            <div class="header-main">
+              <div class="header-title">
+                <h1>教练管理</h1>
+                <div class="header-desc">管理系统中的所有教练信息</div>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-primary">➕ 新增教练</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-bar">
+            <div class="filter-row">
+              <div class="filter-item">
+                <label class="filter-label">教练姓名</label>
+                <input type="text" class="filter-input" placeholder="搜索教练姓名">
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">教练等级</label>
+                <select class="filter-select">
+                  <option value="">请选择</option>
+                  <option value="junior">初级教练</option>
+                  <option value="intermediate">中级教练</option>
+                  <option value="senior">高级教练</option>
+                  <option value="master">特级教练</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">状态</label>
+                <select class="filter-select">
+                  <option value="">请选择</option>
+                  <option value="active">在职</option>
+                  <option value="inactive">离职</option>
+                  <option value="leave">休假</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <button class="btn btn-primary">🔍 搜索</button>
+                <button class="btn btn-secondary">🔄 重置</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">👨‍🏫</div>
+                <div class="stat-info">
+                  <div class="stat-value">24</div>
+                  <div class="stat-label">教练总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                  <div class="stat-value">21</div>
+                  <div class="stat-label">在职教练</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">⭐</div>
+                <div class="stat-info">
+                  <div class="stat-value">8</div>
+                  <div class="stat-label">高级教练</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon purple">📊</div>
+                <div class="stat-info">
+                  <div class="stat-value">4.6</div>
+                  <div class="stat-label">平均评分</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-header">
+              <div class="table-title">教练列表 [共 24 条记录]</div>
+              <div>
+                <button class="btn btn-secondary">🔄 刷新</button>
+                <button class="btn btn-secondary">📥 导出</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox"></th>
+                  <th>ID</th>
+                  <th>姓名</th>
+                  <th>联系电话</th>
+                  <th>教练证号</th>
+                  <th>等级</th>
+                  <th>教龄</th>
+                  <th>学员数</th>
+                  <th>评分</th>
+                  <th>状态</th>
+                  <th>入职时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>1</td>
+                  <td>张教练</td>
+                  <td>13800138001</td>
+                  <td>JL20240001</td>
+                  <td><span class="tag tag-warning">高级</span></td>
+                  <td>8年</td>
+                  <td>32</td>
+                  <td>4.8</td>
+                  <td><span class="tag tag-success">在职</span></td>
+                  <td>2018-03-15</td>
+                  <td>
+                    <button class="btn btn-text">👁️ 查看</button>
+                    <button class="btn btn-text">✏️ 编辑</button>
+                    <button class="btn btn-text">🗑️ 删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      },
+      
+      car: {
+        title: '车辆管理',
+        content: `
+          <div class="page-header">
+            <div class="header-main">
+              <div class="header-title">
+                <h1>车辆管理</h1>
+                <div class="header-desc">管理驾校所有训练车辆信息</div>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-primary">➕ 新增车辆</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">🚗</div>
+                <div class="stat-info">
+                  <div class="stat-value">36</div>
+                  <div class="stat-label">车辆总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                  <div class="stat-value">32</div>
+                  <div class="stat-label">正常车辆</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">🔧</div>
+                <div class="stat-info">
+                  <div class="stat-value">3</div>
+                  <div class="stat-label">维修中</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon purple">⚡</div>
+                <div class="stat-info">
+                  <div class="stat-value">8</div>
+                  <div class="stat-label">电动车</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-header">
+              <div class="table-title">车辆列表 [共 36 条记录]</div>
+              <div>
+                <button class="btn btn-secondary">🔄 刷新</button>
+                <button class="btn btn-secondary">📥 导出</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox"></th>
+                  <th>车牌号</th>
+                  <th>品牌型号</th>
+                  <th>类型</th>
+                  <th>车架号</th>
+                  <th>发动机号</th>
+                  <th>购买日期</th>
+                  <th>里程(km)</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><span class="tag tag-primary">粤A12345</span></td>
+                  <td>大众桑塔纳</td>
+                  <td><span class="tag tag-info">手动挡</span></td>
+                  <td>LSVXX123456789012</td>
+                  <td>123456789</td>
+                  <td>2020-03-15</td>
+                  <td>45,000</td>
+                  <td><span class="tag tag-success">正常</span></td>
+                  <td>
+                    <button class="btn btn-text">👁️ 查看</button>
+                    <button class="btn btn-text">✏️ 编辑</button>
+                    <button class="btn btn-text">🗑️ 删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      },
+      
+      site: {
+        title: '场地管理',
+        content: `
+          <div class="page-header">
+            <div class="header-main">
+              <div class="header-title">
+                <h1>场地管理</h1>
+                <div class="header-desc">管理驾校各个训练场地信息</div>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-primary">➕ 新增场地</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">🏢</div>
+                <div class="stat-info">
+                  <div class="stat-value">12</div>
+                  <div class="stat-label">场地总数</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                  <div class="stat-value">10</div>
+                  <div class="stat-label">正常使用</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">📍</div>
+                <div class="stat-info">
+                  <div class="stat-value">4</div>
+                  <div class="stat-label">科目二场地</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon purple">👥</div>
+                <div class="stat-info">
+                  <div class="stat-value">240</div>
+                  <div class="stat-label">总容量</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-header">
+              <div class="table-title">场地列表 [共 12 条记录]</div>
+              <div>
+                <button class="btn btn-secondary">🔄 刷新</button>
+                <button class="btn btn-secondary">📥 导出</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox"></th>
+                  <th>场地名称</th>
+                  <th>类型</th>
+                  <th>位置</th>
+                  <th>面积(㎡)</th>
+                  <th>容量</th>
+                  <th>设备情况</th>
+                  <th>状态</th>
+                  <th>负责人</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>科目二训练场A区</td>
+                  <td><span class="tag tag-success">科目二</span></td>
+                  <td>广州市天河区XXX路123号</td>
+                  <td>2,500</td>
+                  <td>30</td>
+                  <td><span class="tag tag-success">完善</span></td>
+                  <td><span class="tag tag-success">正常使用</span></td>
+                  <td>张主任</td>
+                  <td>
+                    <button class="btn btn-text">👁️ 查看</button>
+                    <button class="btn btn-text">✏️ 编辑</button>
+                    <button class="btn btn-text">🗑️ 删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      }
+    };
+
+    // 切换菜单函数
+    function switchMenu(menu) {
+      // 更新活动状态
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // 更新页面标题
+      document.getElementById('current-page-title').textContent = menuConfig[menu].title;
+      
+      // 更新内容
+      document.getElementById('main-content').innerHTML = menuConfig[menu].content;
+      
+      activeMenu = menu;
+    }
+
+    // 功能函数
+    function addStudent() {
+      alert('新增学员功能 - 可连接真实API实现');
+    }
+
+    function logout() {
+      if(confirm('确定要退出登录吗？')) {
+        alert('退出登录功能');
+      }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 默认显示首页
+      switchMenu('dashboard');
+      
+      // 搜索功能
+      document.querySelector('.search-input').addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') {
+          alert('搜索功能 - 关键词: ' + this.value);
+        }
+      });
+    });
+
+    console.log('驾校管理系统已加载');
+  </script>
+</body>
+</html>

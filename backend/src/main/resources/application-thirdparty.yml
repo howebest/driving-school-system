@@ -1,0 +1,12 @@
+baidu:
+  face:
+    api-key: your-baidu-api-key
+    secret-key: your-baidu-secret-key
+    auth-url: https://aip.baidubce.com/oauth/2.0/token
+    verify-url: https://aip.baidubce.com/rest/2.0/face/v3/search
+
+aliyun:
+  plate:
+    access-key-id: your-aliyun-access-key-id
+    access-key-secret: your-aliyun-access-key-secret
+    endpoint: ocr.cn-shanghai.aliyuncs.com

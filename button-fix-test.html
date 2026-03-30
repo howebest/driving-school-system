@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>按钮事件修复验证</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f2f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .debug-area {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        .overlay-test {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+        .modal-test {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1001;
+            display: none;
+            min-width: 400px;
+        }
+        .modal-footer-test {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 按钮事件绑定终极修复</h1>
+        
+        <div class="debug-area">
+            <h3>🎯 修复策略</h3>
+            <ul>
+                <li><strong>事件委托</strong> - 使用document级别的事件监听</li>
+                <li><strong>事件阻止</strong> - 防止事件冒泡和默认行为</li>
+                <li><strong>明确标识</strong> - 使用唯一的ID而不是内联事件</li>
+                <li><strong>层级保护</strong> - 设置正确的z-index确保按钮可点击</li>
+            </ul>
+        </div>
+
+        <div class="debug-area">
+            <h3>🧪 实时事件监控</h3>
+            <div class="event-log" id="eventLog">
+                > 等待事件触发...
+            </div>
+            <button class="btn btn-primary" onclick="startTest()">开始测试</button>
+            <button class="btn btn-secondary" onclick="clearLog()">清空日志</button>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn btn-primary" id="realSaveBtn">模拟保存按钮</button>
+            <button class="btn btn-secondary" id="realCancelBtn">模拟取消按钮</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- 测试用模态框 -->
+    <div class="overlay-test" id="testOverlay"></div>
+    <div class="modal-test" id="testModal">
+        <h3>测试模态框</h3>
+        <p>这是一个测试用的模态框，用来验证按钮事件。</p>
+        <div class="modal-footer-test">
+            <button type="button" class="btn btn-secondary" id="testCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="testSaveBtn">确定</button>
+        </div>
+    </div>
+
+    <script>
+        let eventCount = 0;
+        const logElement = document.getElementById('eventLog');
+
+        function logEvent(message) {
+            eventCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${eventCount}. ${message}`;
+            logElement.innerHTML += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(logEntry);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '> 日志已清空...\n';
+            eventCount = 0;
+        }
+
+        function startTest() {
+            logEvent('=== 开始按钮事件测试 ===');
+            
+            // 显示测试模态框
+            document.getElementById('testOverlay').style.display = 'block';
+            document.getElementById('testModal').style.display = 'block';
+            
+            logEvent('测试模态框已显示');
+        }
+
+        // 终极事件绑定方案
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('页面加载完成，初始化事件监听器');
+
+            // 使用事件委托处理所有按钮点击
+            document.addEventListener('click', function(e) {
+                logEvent(`检测到点击事件: target=${e.target.tagName}.${e.target.className} id=${e.target.id}`);
+
+                // 阻止所有事件的默认行为和冒泡
+                e.preventDefault();
+                e.stopPropagation();
+
+                // 处理不同按钮
+                if (e.target.id === 'realSaveBtn' || e.target.id === 'testSaveBtn') {
+                    logEvent('✅ 保存按钮被正确识别和处理');
+                    handleSave(e);
+                    return false;
+                }
+
+                if (e.target.id === 'realCancelBtn' || e.target.id === 'testCancelBtn') {
+                    logEvent('✅ 取消按钮被正确识别和处理');
+                    handleCancel(e);
+                    return false;
+                }
+
+                // 点击模态框外部关闭
+                if (e.target.id === 'testOverlay') {
+                    logEvent('点击模态框外部，关闭模态框');
+                    closeTestModal();
+                    return false;
+                }
+            }, true); // 使用捕获阶段
+
+            logEvent('事件监听器绑定完成');
+        });
+
+        function handleSave(e) {
+            logEvent('执行保存操作...');
+            setTimeout(() => {
+                alert('🎉 保存成功！这证明按钮事件工作正常。');
+                closeTestModal();
+                showResult('success', '保存按钮功能正常！');
+            }, 500);
+        }
+
+        function handleCancel(e) {
+            logEvent('执行取消操作...');
+            closeTestModal();
+            showResult('info', '取消按钮功能正常！');
+        }
+
+        function closeTestModal() {
+            document.getElementById('testOverlay').style.display = 'none';
+            document.getElementById('testModal').style.display = 'none';
+            logEvent('模态框已关闭');
+        }
+
+        function showResult(type, message) {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <div class="status ${type}">
+                    <h3>${type === 'success' ? '✅' : 'ℹ️'} ${message}</h3>
+                    <p>事件处理机制工作正常，按钮点击被正确识别。</p>
+                </div>
+            `;
+        }
+
+        // 防止模态框内容区域的事件冒泡
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalContent = document.querySelector('.modal-test');
+            if (modalContent) {
+                modalContent.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    logEvent('模态框内容区域点击事件被阻止冒泡');
+                });
+            }
+        });
+
+        logEvent('测试页面初始化完成');
+    </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终按钮修复验证</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 2px solid #e9ecef;
+        }
+        .debug-info {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+            position: relative;
+            outline: none;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(108,117,125,0.3);
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+        .hover-test {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px dashed #ffc107;
+        }
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            height: 150px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        /* 防止意外的hover效果 */
+        .safe-container:hover {
+            background: transparent !important;
+        }
+        .safe-wrapper {
+            display: inline-block;
+            position: relative;
+        }
+        .safe-wrapper:hover {
+            background: transparent !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 最终按钮修复验证</h1>
+        
+        <div class="debug-info">
+            <h3>🔍 问题诊断</h3>
+            <p><strong>根本原因：</strong>按钮被包裹在具有hover样式的容器中，导致整个组件被选中</p>
+            <p><strong>解决方案：</strong>使用独立的按钮包装器，禁用所有父级hover效果</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 悬停测试</h3>
+            <div class="hover-test">
+                <p><strong>测试说明：</strong>将鼠标悬停在下面的按钮上，观察是否只有按钮本身被高亮</p>
+                <div class="safe-wrapper">
+                    <button class="btn btn-secondary" id="hoverTestCancel">取消按钮</button>
+                    <button class="btn btn-primary" id="hoverTestSave">保存按钮</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>⚡ 点击功能测试</h3>
+            <div style="text-align: center;">
+                <button class="btn btn-secondary" id="finalCancelBtn">最终取消按钮</button>
+                <button class="btn btn-primary" id="finalSaveBtn">最终保存按钮</button>
+            </div>
+            <div class="event-log" id="eventLog">
+                > 等待按钮事件...
+            </div>
+        </div>
+
+        <div id="results"></div>
+
+        <div class="status info">
+            <h3>✅ 预期修复效果</h3>
+            <ul>
+                <li>鼠标悬停时只有按钮本身高亮，不会选中整个组件</li>
+                <li>点击"保存"按钮只执行保存功能</li>
+                <li>点击"取消"按钮只关闭模态框</li>
+                <li>没有任何意外的文件上传对话框弹出</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let eventCounter = 0;
+        const logElement = document.getElementById('eventLog');
+
+        function logEvent(message) {
+            eventCounter++;
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${eventCounter}. ${message}`;
+            logElement.innerHTML += entry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(entry);
+        }
+
+        // 最简单的事件绑定方式
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('页面加载完成，开始绑定事件');
+
+            // 取消按钮
+            const cancelBtn = document.getElementById('finalCancelBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    logEvent('✅ 取消按钮被正确点击');
+                    showResult('info', '取消功能正常！');
+                });
+                
+                cancelBtn.addEventListener('mouseover', function() {
+                    logEvent('鼠标悬停在取消按钮上');
+                });
+            }
+
+            // 保存按钮
+            const saveBtn = document.getElementById('finalSaveBtn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    logEvent('✅ 保存按钮被正确点击');
+                    showResult('success', '保存功能正常！');
+                });
+                
+                saveBtn.addEventListener('mouseover', function() {
+                    logEvent('鼠标悬停在保存按钮上');
+                });
+            }
+
+            // 悬停测试按钮
+            document.getElementById('hoverTestCancel').addEventListener('mouseover', function() {
+                logEvent('悬停测试：取消按钮');
+            });
+            
+            document.getElementById('hoverTestSave').addEventListener('mouseover', function() {
+                logEvent('悬停测试：保存按钮');
+            });
+
+            logEvent('所有事件绑定完成');
+        });
+
+        function showResult(type, message) {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <div class="status ${type}">
+                    <h3>${type === 'success' ? '✅' : 'ℹ️'} ${message}</h3>
+                    <p>按钮事件处理机制工作正常，没有组件被意外选中的问题。</p>
+                </div>
+            `;
+        }
+
+        // 阻止所有可能的意外行为
+        document.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('btn')) {
+                e.preventDefault();
+            }
+        }, true);
+
+        logEvent('最终测试页面初始化完成');
+    </script>
+</body>
+</html>

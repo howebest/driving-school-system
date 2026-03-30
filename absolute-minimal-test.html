@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>绝对最小化按钮测试</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+    <h1>🔬 绝对最小化按钮测试</h1>
+    
+    <div style="background: #f0f0f0; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <h3>测试区域</h3>
+        <div style="text-align: right; padding: 15px; background: white; border: 1px solid #ddd;">
+            <button 
+                id="testCancel" 
+                type="button"
+                style="padding: 8px 16px; margin-left: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;"
+                onmouseover="this.style.background='#5a6268'"
+                onmouseout="this.style.background='#6c757d'">
+                取消
+            </button>
+            <button 
+                id="testSave" 
+                type="button"
+                style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+                onmouseover="this.style.background='#0056b3'"
+                onmouseout="this.style.background='#007bff'">
+                确定
+            </button>
+        </div>
+    </div>
+    
+    <div id="log" style="background: black; color: white; padding: 15px; font-family: monospace; height: 200px; overflow-y: scroll;">
+        > 等待按钮事件...
+    </div>
+    
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        let counter = 0;
+        const log = document.getElementById('log');
+        
+        function addLog(msg) {
+            counter++;
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${counter}. ${msg}\n`;
+            log.scrollTop = log.scrollHeight;
+            console.log(msg);
+        }
+        
+        function setResult(type, msg) {
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <div style="padding: 15px; background: ${type === 'success' ? '#d4edda' : '#f8d7da'}; 
+                           color: ${type === 'success' ? '#155724' : '#721c24'}; border-radius: 6px;">
+                    <h3>${type === 'success' ? '✅' : '❌'} ${msg}</h3>
+                </div>
+            `;
+        }
+        
+        // 最简单的事件绑定
+        window.onload = function() {
+            addLog('页面加载完成');
+            
+            const cancelBtn = document.getElementById('testCancel');
+            const saveBtn = document.getElementById('testSave');
+            
+            if (cancelBtn) {
+                cancelBtn.onclick = function(e) {
+                    addLog('取消按钮被点击');
+                    e.preventDefault();
+                    setResult('info', '取消按钮工作正常！');
+                    return false;
+                };
+                addLog('取消按钮绑定完成');
+            }
+            
+            if (saveBtn) {
+                saveBtn.onclick = function(e) {
+                    addLog('保存按钮被点击');
+                    e.preventDefault();
+                    setResult('success', '保存按钮工作正常！');
+                    return false;
+                };
+                addLog('保存按钮绑定完成');
+            }
+            
+            addLog('所有按钮初始化完成');
+        };
+        
+        addLog('脚本开始执行');
+    </script>
+</body>
+</html>
