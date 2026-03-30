@@ -1,0 +1,2 @@
+# Netlify Deployment Trigger
+This file triggers a new Netlify build after fixing the merge conflict.
