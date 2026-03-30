@@ -1,0 +1,192 @@
+/* 移动端适配样式 */
+@media screen and (max-width: 768px) {
+  /* 登录页面适配 */
+  .login-container {
+    padding: 10px;
+  }
+  
+  .login-box {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .login-header h1 {
+    font-size: 20px;
+  }
+  
+  /* 仪表板适配 */
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100% !important;
+    height: auto;
+  }
+  
+  .sidebar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+  }
+  
+  .el-aside {
+    height: auto;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* 卡片适配 */
+  .el-card {
+    margin-bottom: 10px;
+  }
+  
+  .overview-cards .el-col {
+    margin-bottom: 10px;
+  }
+  
+  .card-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  /* 表格适配 */
+  .el-table {
+    font-size: 12px;
+  }
+  
+  .el-table th,
+  .el-table td {
+    padding: 8px 0;
+  }
+  
+  /* 按钮适配 */
+  .el-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  /* 监控页面适配 */
+  .monitor-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .camera-feed {
+    height: 150px;
+  }
+  
+  /* 预警页面适配 */
+  .warning-item {
+    padding: 10px;
+  }
+  
+  .warning-content {
+    font-size: 12px;
+  }
+  
+  /* 设置页面适配 */
+  .settings-menu .el-menu-item {
+    font-size: 14px;
+  }
+}
+
+/* 小屏幕设备适配 */
+@media screen and (max-width: 480px) {
+  .el-dialog {
+    width: 95% !important;
+    margin: 10px auto;
+  }
+  
+  .el-drawer {
+    width: 95% !important;
+  }
+  
+  .el-message-box {
+    width: 90%;
+  }
+  
+  .el-notification {
+    width: 90%;
+    padding: 15px;
+  }
+  
+  /* 图标按钮适配 */
+  .el-button [class*="el-icon"] + span {
+    margin-left: 5px;
+  }
+  
+  /* 表单项适配 */
+  .el-form-item__label {
+    font-size: 13px;
+  }
+  
+  .el-input__inner {
+    font-size: 14px;
+  }
+}
+
+/* 横屏适配 */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .login-box {
+    max-width: 90%;
+  }
+  
+  .monitor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .camera-feed {
+    height: 120px;
+  }
+}
+
+/* 触摸设备优化 */
+@media (pointer: coarse) {
+  /* 增大点击区域 */
+  .el-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 滚动条优化 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  /* 下拉刷新提示 */
+  .mobile-refresh-tip {
+    text-align: center;
+    padding: 10px;
+    color: #999;
+    font-size: 12px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .sidebar,
+  .header,
+  .el-dialog,
+  .el-drawer {
+    display: none !important;
+  }
+  
+  .main-content {
+    padding: 0 !important;
+  }
+  
+  .el-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

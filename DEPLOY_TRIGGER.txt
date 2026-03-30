@@ -1,0 +1,2 @@
+# Deployment Trigger
+This file triggers GitHub Actions deployment workflow.
